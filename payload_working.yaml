@@ -180,7 +180,7 @@ paths:
       responses:
         '200':
           description: Order list returned
-  /orders:
+
     post:
       tags:
         - Orders
