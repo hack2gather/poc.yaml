@@ -180,7 +180,6 @@ paths:
 
     post:
       tags:
-        - Orders
       operationId: createOrder
       summary: Create New Order
       description: Submit a new equipment or parts order. Orders are
