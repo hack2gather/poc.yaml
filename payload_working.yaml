@@ -149,9 +149,6 @@ paths:
       responses:
         '200':
           description: Inventory data returned
-  /orders:
-    get:
-      tags:
         - Orders
       operationId: listOrders
       summary: List Orders
